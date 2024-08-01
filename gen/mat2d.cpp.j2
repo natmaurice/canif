@@ -1,0 +1,69 @@
+// NOTE: This file is auto-generated.
+
+#include "mat2d.hpp"
+#include "utils.hpp"
+
+#include <cstdint>
+
+namespace canif {
+
+constexpr size_t ALIGNMENT = 64;
+
+// 2D
+
+// Allocation functions
+
+{% for dt in datatypes %}
+{{ dt['FULL'] }}** mat2D_{{dt['SHORT']}}_create(struct dim2D dims) {
+    using T = {{ dt['FULL'] }};
+    int64_t nrow = dims.rowmax - dims.rowmin;
+    int64_t ncols = dims.colmax - dims.colmin;
+    int64_t rowpitch = roundup_kpow2(ncols, 64 / sizeof(T));
+    T* mat  = aligned_new<T>(nrow * rowpitch, ALIGNMENT);
+    T** imat = aligned_new<T*>(nrow, ALIGNMENT);
+    
+  
+    mat -= (rowpitch * dims.rowmin + dims.colmin);
+    imat -= dims.rowmin;    
+
+    for (int64_t i = dims.rowmin; i < dims.rowmax; i++) {
+        imat[i] = mat + i * rowpitch;
+    }
+  
+    return imat;
+}
+{% endfor %}
+
+// Free functions
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_free({{dt['FULL']}}** mat, struct dim2D dims) {
+    using T = {{ dt['FULL'] }};
+    int64_t ncols = dims.colmax - dims.colmin;
+    int64_t rowpitch = roundup_kpow2(ncols, 64 / sizeof(T));
+    if (mat == nullptr) return;
+    
+    T* pmat = *mat + (rowpitch * dims.rowmin + dims.colmin);
+    T** pimat = &mat[dims.rowmin];
+
+    aligned_delete(pmat, ALIGNMENT);
+    aligned_delete(pimat, ALIGNMENT);  
+}
+{% endfor %}
+
+// Fill functions
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_fill({{dt['FULL']}}** mat, struct dim2D dims, {{dt['FULL']}} val) {
+    using T = {{dt['FULL']}};
+    for (int64_t i = dims.rowmin; i < dims.rowmax; i++) {
+        T* line = mat[i];
+        for (int64_t j = dims.colmin; j < dims.colmax; j++) {
+            line[j] = val;
+        }
+    }
+}
+{% endfor %}
+
+
+}

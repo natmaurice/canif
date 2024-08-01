@@ -1,0 +1,26 @@
+#ifndef CANIF_MAT{{dimensions}}D_FUNCTIONS_HPP_
+#define CANIF_MAT{{dimensions}}D_FUNCTIONS_HPP_
+
+#include <cstdint>
+
+namespace canif {
+
+// Alloc functions
+{%- for dt in datatypes %}
+{{ dt['FULL'] }}{{"*" * dimensions}} mat{{dimensions}}D_{{dt['SHORT']}}_create(struct dim{{dimensions}}D dims);
+{%- endfor %}
+
+// Free functions
+{%- for dt in datatypes %}
+void mat{{dimensions}}D_{{dt['SHORT']}}_free({{dt['FULL']}}{{"*" * dimensions}} mat, struct dim{{dimensions}}D dims);
+{%- endfor %}
+
+// Fill functions
+// Note: These functions will also fill borders
+{%- for dt in datatypes %}
+void mat{{dimensions}}D_{{dt['SHORT']}}_fill({{dt['FULL']}}{{"*" * dimensions}} mat, struct dim{{dimensions}}D dims, {{dt['FULL']}} val);
+{%- endfor %}
+
+}
+
+#endif // CANIF_MAT{{dimensions}}D_FUNCTIONS_HPP_

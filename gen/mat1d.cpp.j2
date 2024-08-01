@@ -1,0 +1,49 @@
+// NOTE: This file is auto-generated
+
+#include "mat1d.hpp"
+#include "utils.hpp"
+
+namespace canif {
+
+constexpr size_t ALIGNMENT = 64;
+
+// 2D
+
+// Allocation functions
+
+{% for dt in datatypes %}
+{{ dt['FULL'] }}* mat1D_{{dt['SHORT']}}_create(struct dim1D dims) {
+    using T = {{ dt['FULL'] }};
+    int64_t n = dims.nmax - dims.nmin;
+    int64_t pitch = roundup_kpow2(n, ALIGNMENT / sizeof(T));
+    T* mat = aligned_new<T>(pitch, ALIGNMENT);
+    
+    mat -= dims.nmin;
+    
+    return mat;
+}
+{% endfor %}
+
+// Free functions
+
+{% for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_free({{dt['FULL']}}* mat, struct dim1D dims) {
+    using T = {{ dt['FULL'] }};
+    T* pmat = mat + dims.nmin;
+    
+    aligned_delete(pmat, ALIGNMENT);
+}
+{% endfor %}
+
+// Fill functions
+
+{% for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_fill({{dt['FULL']}}* mat, struct dim1D dims, {{dt['FULL']}} val) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        mat[i] = val;
+    }
+}
+{% endfor %}
+
+
+}

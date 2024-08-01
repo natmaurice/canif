@@ -1,0 +1,79 @@
+// NOTE: This file is auto-generated.
+
+#include "mat3d.hpp"
+#include "utils.hpp"
+
+#include <cstdint>
+
+namespace canif {
+
+constexpr size_t ALIGNMENT = 64;
+
+// 3D
+
+// Allocation functions
+
+{% for dt in datatypes %}
+{{ dt['FULL'] }}*** mat3D_{{dt['SHORT']}}_create(struct dim3D dims) {
+    using T = {{ dt['FULL'] }};
+    int64_t nrows = dims.rowmax - dims.rowmin;
+    int64_t ncols = dims.colmax - dims.colmin;
+    int64_t nslices = dims.slicemax - dims.slicemin;
+    int64_t rowpitch = roundup_kpow2(ncols, 64 / sizeof(T));
+    int64_t slicepitch = rowpitch * nrows;
+    T* mat  = aligned_new<T>(nslices * slicepitch, ALIGNMENT);
+    T** imat = aligned_new<T*>(nslices * nrows, ALIGNMENT);
+    T*** iimat = aligned_new<T**>(nslices, ALIGNMENT);
+  
+    mat -= (slicepitch * dims.slicemin + rowpitch * dims.rowmin + dims.colmin);
+    imat -= (nrows * dims.slicemin + dims.rowmin);
+    iimat -= dims.slicemin;
+
+    for (int64_t s = dims.slicemin; s < dims.slicemax; s++) {
+        iimat[s] = imat + s * nrows;
+        for (int64_t r = dims.rowmin; r < dims.rowmax; r++) {
+            iimat[s][r] = mat + r * rowpitch + s * slicepitch;
+        }
+    }
+  
+    return iimat;
+}
+{% endfor %}
+
+// Free functions
+
+{% for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_free({{dt['FULL']}}*** mat, struct dim3D dims) {
+    using T = {{ dt['FULL'] }};
+    int64_t ncols = dims.colmax - dims.colmin;
+    int64_t rowpitch = roundup_kpow2(ncols, 64 / sizeof(T));
+    if (mat == nullptr) return;
+    
+    T* pmat = &mat[dims.slicemin][dims.rowmin][dims.colmin];
+    T** pimat = &mat[dims.slicemin][dims.rowmin];
+    T*** piimat = &mat[dims.slicemin];
+  
+    aligned_delete(pmat, ALIGNMENT);
+    aligned_delete(pimat, ALIGNMENT);
+    aligned_delete(piimat, ALIGNMENT);
+}
+{% endfor %}
+
+// Fill functions
+
+{% for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_fill({{dt['FULL']}}*** mat, struct dim3D dims, {{dt['FULL']}} val) {
+    using T = {{dt['FULL']}};
+    for (int64_t s = dims.slicemin; s < dims.slicemax; s++) {
+        for (int64_t r = dims.rowmin; r < dims.rowmax; r++) {
+            T* line = mat[s][r];
+            for (int64_t c = dims.colmin; c < dims.colmax; c++) {
+                line[c] = val;
+            }
+        }
+    }
+}
+{% endfor %}
+
+
+}
