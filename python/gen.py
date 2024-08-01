@@ -49,6 +49,6 @@ def gen_mat(source, dimensions):
     pass
 
 
-gen_mat(("mat1d.cpp.j2", "mat1d.cpp"), dimensions=1)
-gen_mat(("mat2d.cpp.j2", "mat2d.cpp"), dimensions=2)
-gen_mat(("mat3d.cpp.j2", "mat3d.cpp"), dimensions=3)
+gen_mat(("mat1d.cpp.j2", "mat1d-functions.cpp"), dimensions=1)
+gen_mat(("mat2d.cpp.j2", "mat2d-functions.cpp"), dimensions=2)
+gen_mat(("mat3d.cpp.j2", "mat3d-functions.cpp"), dimensions=3)

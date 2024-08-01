@@ -15,9 +15,9 @@ set(
 )
 
 set(CANIF_SRCs
-  ${src_dir}/mat1d.cpp
-  ${src_dir}/mat2d.cpp
-  ${src_dir}/mat3d.cpp
+  ${src_dir}/mat1d-functions.cpp
+  ${src_dir}/mat2d-functions.cpp
+  ${src_dir}/mat3d-functions.cpp
 )
 
 
