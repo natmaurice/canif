@@ -65,5 +65,67 @@ void mat2D_{{dt['SHORT']}}_fill({{dt['FULL']}}** mat, struct dim2D dims, {{dt['F
 }
 {% endfor %}
 
+// Copy functions
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_copy(const {{dt['FULL']}}*const *const src, {{dt['FULL']}}** dst, struct dim2D dims) {
+    using T = {{dt['FULL']}};
+    for (int64_t r = dims.rowmin; r < dims.rowmax; r++) {
+        const T* srcline = src[r];
+        T* dstline = dst[r];
+        for (int64_t c = dims.colmin; c < dims.colmax; c++) {
+              dstline[c] = srcline[c];
+        }
+    }
+}
+{% endfor %}
+
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_copyat(const {{dt['FULL']}}*const *const src, {{dt['FULL']}}** dst, struct dim2D srcdims, int64_t dstr, int64_t dstc) {
+    using T = {{dt['FULL']}};
+    for (int64_t r = srcdims.rowmin; r < srcdims.rowmax; r++) {
+        const T* srcline = src[r];
+        T* dstline = dst[r + dstr];
+        for (int64_t c = srcdims.colmin; c < srcdims.colmax; c++) {
+              dstline[c + dstc] = srcline[c];
+        }
+    }
+}
+{% endfor %}
+
+
+// Unpack functions
+// Convert a matrix of size [N; M] with Z channels into a 3D tensor of size [Z; N; M] (equivalent to AoS => SoA transformation)
+// Note: a 3D matrix of size [Z; N; M] must be allocated beforehand
+// Note: The opposite functions are mat3D_T_pack()
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_unpack(const {{dt['FULL']}} *const *const src, {{dt['FULL']}}*** dst, struct dim2D srcdims, int channels) {
+    for (int64_t r = srcdims.rowmin; r < srcdims.rowmax; r++) {
+        for (int64_t c = srcdims.colmin, off = srcdims.colmin; c < srcdims.colmax; c += channels, off++) {
+            for (int ch = 0; ch < channels; ch++) {
+                dst[ch][r][off] = src[r][c + ch];
+            }
+        }
+    }
+}
+{% endfor %}
+
+// Pack functions
+// Convert a matrix of size [Z; N] into a 1D array of size [NxZ] (with Z channels).
+// This is equivalence to a SoA => AoS transformation and is the opposite operation of mat1D_T_unpack() functions
+// Note: Destination array must be pre-allocated
+
+{% for dt in datatypes %}
+void mat2D_{{dt['SHORT']}}_pack(const {{dt['FULL']}} *const *const src, {{dt['FULL']}}* dst, struct dim2D srcdims) {
+    int64_t channels = (srcdims.rowmax - srcdims.rowmin);
+    for (int64_t c = srcdims.colmin, off = srcdims.colmin; c < srcdims.colmax; c++, off += channels) {
+        for (int64_t r = srcdims.rowmin; r < srcdims.rowmax; r++) {
+            dst[off + r] = src[r][c];
+        }
+    }
+}
+{% endfor %}
 
 }

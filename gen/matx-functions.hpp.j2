@@ -5,6 +5,8 @@
 
 namespace canif {
 
+// LOW-LEVEL API
+
 // Alloc functions
 {%- for dt in datatypes %}
 {{ dt['FULL'] }}{{"*" * dimensions}} mat{{dimensions}}D_{{dt['SHORT']}}_create(struct dim{{dimensions}}D dims);
@@ -20,6 +22,20 @@ void mat{{dimensions}}D_{{dt['SHORT']}}_free({{dt['FULL']}}{{"*" * dimensions}} 
 {%- for dt in datatypes %}
 void mat{{dimensions}}D_{{dt['SHORT']}}_fill({{dt['FULL']}}{{"*" * dimensions}} mat, struct dim{{dimensions}}D dims, {{dt['FULL']}} val);
 {%- endfor %}
+
+// Copy functions
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat{{dimensions}}D_{{dt['SHORT']}}_copy(const {{dt['FULL']}}{{"* const" * dimensions}} src, {{dt['FULL']}}{{"*" * dimensions}} dst, struct dim{{dimensions}}D dims);
+{%- endfor %}
+
+// Copyat functions
+// Unlike copy functions, these functions add an offset to the destination area
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat{{dimensions}}D_{{dt['SHORT']}}_copyat(const {{dt['FULL']}}{{"* const" * dimensions}} src, {{dt['FULL']}}{{"*" * dimensions}} dst, struct dstdim{{dimensions}}D dims, int64_t dstr, int64_t dstc);
+{%- endfor %}
+
 
 }
 

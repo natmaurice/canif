@@ -9,6 +9,8 @@ constexpr size_t ALIGNMENT = 64;
 
 // 2D
 
+// LOW-LEVEL API
+
 // Allocation functions
 
 
@@ -261,5 +263,219 @@ void mat1D_f64_fill(double* mat, struct dim1D dims, double val) {
 }
 
 
+// Copy functions
 
+
+void mat1D_u8_copy(const uint8_t*const src, uint8_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_u16_copy(const uint16_t*const src, uint16_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_u32_copy(const uint32_t*const src, uint32_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_u64_copy(const uint64_t*const src, uint64_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_i8_copy(const int8_t*const src, int8_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_i16_copy(const int16_t*const src, int16_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_i32_copy(const int32_t*const src, int32_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_i64_copy(const int64_t*const src, int64_t* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_f32_copy(const float*const src, float* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+void mat1D_f64_copy(const double*const src, double* dst, struct dim1D dims) {
+    for (int64_t i = dims.nmin; i < dims.nmax; i++) {
+        dst[i] = src[i];
+    }
+}
+
+
+
+
+void mat1D_u8_copyat(const uint8_t*const src, uint8_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_u16_copyat(const uint16_t*const src, uint16_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_u32_copyat(const uint32_t*const src, uint32_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_u64_copyat(const uint64_t*const src, uint64_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_i8_copyat(const int8_t*const src, int8_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_i16_copyat(const int16_t*const src, int16_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_i32_copyat(const int32_t*const src, int32_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_i64_copyat(const int64_t*const src, int64_t* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_f32_copyat(const float*const src, float* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+void mat1D_f64_copyat(const double*const src, double* dst, struct dim1D srcdims, int dsti) {
+    for (int64_t i = srcdims.nmin; i < srcdims.nmax; i++) {
+        dst[dsti + i] = src[i];
+    }
+}
+
+
+
+// Unpack functions
+// Convert a vector of size N with M channels into a matrix of size [M * N] (equivalent to AoS => SoA transformation)
+// Note: a 2D matrix of size M * N must be allocated beforehand
+// Note: The opposite functions are mat2D_T_pack()
+
+
+void mat1D_u8_unpack(const uint8_t* const src, uint8_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_u16_unpack(const uint16_t* const src, uint16_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_u32_unpack(const uint32_t* const src, uint32_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_u64_unpack(const uint64_t* const src, uint64_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_i8_unpack(const int8_t* const src, int8_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_i16_unpack(const int16_t* const src, int16_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_i32_unpack(const int32_t* const src, int32_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_i64_unpack(const int64_t* const src, int64_t** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_f32_unpack(const float* const src, float** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+void mat1D_f64_unpack(const double* const src, double** dst, struct dim1D srcdims, int channels) {
+    for (int64_t i = srcdims.nmin, off = srcdims.nmin; i < srcdims.nmax; i += channels, off++) {
+        for (int c = 0; c < channels; c++) {
+            dst[c][off] = src[i + c];
+        }
+    }    
+}
+
+  
 }

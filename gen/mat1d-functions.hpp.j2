@@ -1,0 +1,48 @@
+#ifndef CANIF_MAT1D_FUNCTIONS_HPP_
+#define CANIF_MAT1D_FUNCTIONS_HPP_
+
+#include <cstdint>
+
+namespace canif {
+
+// LOW-LEVEL API
+
+// Alloc functions
+{%- for dt in datatypes %}
+{{ dt['FULL'] }}* mat1D_{{dt['SHORT']}}_create(struct dim1D dims);
+{%- endfor %}
+
+// Free functions
+{%- for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_free({{dt['FULL']}}* mat, struct dim1D dims);
+{%- endfor %}
+
+// Fill functions
+// Note: These functions will also fill borders
+{%- for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_fill({{dt['FULL']}}* mat, struct dim1D dims, {{dt['FULL']}} val);
+{%- endfor %}
+
+// Copy functions
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_copy(const {{dt['FULL']}}*const src, {{dt['FULL']}}* dst, struct dim1D dims);
+{%- endfor %}
+
+// Copyat functions
+// Unlike copy functions, these functions add an offset to the destination area
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_copyat(const {{dt['FULL']}}*const src, {{dt['FULL']}}* dst, struct dim1D srcdims, int64_t dsti);
+{%- endfor %}
+
+// Unpack functions
+
+{%- for dt in datatypes %}
+void mat1D_{{dt['SHORT']}}_unpack(const {{dt['FULL']}}* const src, {{dt['FULL']}}** dst, struct dim1D srcdims, int channels);
+{%- endfor %}
+
+
+}
+
+#endif // CANIF_MAT1D_FUNCTIONS_HPP_

@@ -76,4 +76,56 @@ void mat3D_{{dt['SHORT']}}_fill({{dt['FULL']}}*** mat, struct dim3D dims, {{dt['
 {% endfor %}
 
 
+// Copy functions
+
+{% for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_copy(const {{dt['FULL']}}*const *const *const src, {{dt['FULL']}}*** dst, struct dim3D dims) {
+    using T = {{dt['FULL']}};
+    for (int64_t s = dims.slicemin; s < dims.slicemax; s++) {
+        for (int64_t r = dims.rowmin; r < dims.rowmax; r++) {
+            const T* srcline = src[s][r];
+            T* dstline = dst[s][r];
+            for (int64_t c = dims.colmin; c < dims.colmax; c++) {
+                  dstline[c] = srcline[c];
+            }
+        }
+    }
+}
+{% endfor %}
+
+
+{% for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_copyat(const {{dt['FULL']}}*const *const *const src, {{dt['FULL']}}*** dst, struct dim3D srcdims, int dsts, int dstr, int dstc) {
+    using T = {{dt['FULL']}};
+    for (int64_t s = srcdims.slicemin; s < srcdims.slicemax; s++) {
+        for (int64_t r = srcdims.rowmin; r < srcdims.rowmax; r++) {
+            const T* srcline = src[s][r];
+            T* dstline = dst[s + dsts][r + dstr];
+            for (int64_t c = srcdims.colmin; c < srcdims.colmax; c++) {
+                  dstline[c + dstc] = srcline[c];
+            }
+        }
+    }
+}
+{% endfor %}
+
+// Pack functions
+// Convert a matrix of size [Z; N] into a 1D array of size [NxZ] (with Z channels).
+// This is equivalence to a SoA => AoS transformation and is the opposite operation of mat1D_T_unpack() functions
+// Note: Destination array must be pre-allocated
+
+
+{% for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_pack(const {{dt['FULL']}} *const *const *const src, {{dt['FULL']}}** dst, struct dim3D srcdims) {
+    int64_t channels = (srcdims.slicemax - srcdims.slicemin);
+    for (int64_t r = srcdims.rowmin; r < srcdims.rowmax; r++) {
+        for (int64_t c = srcdims.colmin, off = srcdims.colmin; c < srcdims.colmax; c++, off += channels) {
+            for (int64_t s = srcdims.slicemin; s < srcdims.slicemax; s++) {
+                dst[r][off + s] = src[s][r][c];
+            }
+        }
+    }
+}
+{% endfor %}
+
 }

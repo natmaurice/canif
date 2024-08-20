@@ -1,0 +1,51 @@
+#ifndef CANIF_MAT3D_FUNCTIONS_HPP_
+#define CANIF_MAT3D_FUNCTIONS_HPP_
+
+#include <cstdint>
+
+namespace canif {
+
+// LOW-LEVEL API
+
+// Alloc functions
+{%- for dt in datatypes %}
+{{ dt['FULL'] }}*** mat3D_{{dt['SHORT']}}_create(struct dim3D dims);
+{%- endfor %}
+
+// Free functions
+{%- for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_free({{dt['FULL']}}*** mat, struct dim3D dims);
+{%- endfor %}
+
+// Fill functions
+// Note: These functions will also fill borders
+{%- for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_fill({{dt['FULL']}}*** mat, struct dim3D dims, {{dt['FULL']}} val);
+{%- endfor %}
+
+// Copy functions
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_copy(const {{dt['FULL']}}*const *const *const src, {{dt['FULL']}}*** dst, struct dim3D dims);
+{%- endfor %}
+
+// Copyat functions
+// Unlike copy functions, these functions add an offset to the destination area
+// Note: These functions assume that input != output (i.e. their memory do not overlap)
+{%- for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_copyat(const {{dt['FULL']}}*const *const *const src, {{dt['FULL']}}*** dst, struct dim3D dstdims, int64_t dsts, int dstr, int dstc);
+{%- endfor %}
+
+// Pack functions
+// Convert a matrix of size [Z; N] into a 1D array of size [NxZ] (with Z channels).
+// This is equivalence to a SoA => AoS transformation and is the opposite operation of mat1D_T_unpack() functions
+// Note: Destination array must be pre-allocated
+
+{%- for dt in datatypes %}
+void mat3D_{{dt['SHORT']}}_pack(const {{dt['FULL']}} *const *const *const src, {{dt['FULL']}}** dst, struct dim3D srcdims);
+{%- endfor %}
+
+
+}
+
+#endif // CANIF_MAT3D_FUNCTIONS_HPP_

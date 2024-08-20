@@ -24,7 +24,7 @@ DATATYPES = [{'FULL': 'uint8_t', 'SHORT': 'u8'},
 def gen_mat(source, dimensions):
 
     (src_filename, dst_filename) = source
-    src_header_filename = "matx-functions.hpp.j2"
+    src_header_filename = f"mat{dimensions}d-functions.hpp.j2"
     dst_header_filename = f"mat{dimensions}d-functions.hpp"
     
     template_mat2d = env.get_template(src_filename)
