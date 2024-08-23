@@ -1,4 +1,5 @@
-# Canif 
+# Canif (provisional name?)
+
 ## Presentation 
 
 This is a C/C++ library that is designed to allocate images of arbritrary dimensions, while ensuring padding on image borders. 
